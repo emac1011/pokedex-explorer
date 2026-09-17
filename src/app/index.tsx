@@ -44,6 +44,10 @@ export default function HomeScreen() {
 
   const [totalPokemon, setTotalPokemon] = useState(0);
 
+  const [pageInput, setPageInput] = useState("1");
+
+  const [changingPage, setChangingPage] = useState(false);
+
   useEffect(() => {
     loadPokemon(0);
   }, []);
@@ -64,6 +68,11 @@ export default function HomeScreen() {
       setPokemon(data.results);
       setTotalPokemon(data.count);
       setOffset(newOffset);
+
+      const newPage =
+        Math.floor(newOffset / PAGE_SIZE) + 1;
+
+      setPageInput(newPage.toString());
     } catch (error) {
       console.error(
         "Error al cargar Pokémon:",
@@ -140,6 +149,56 @@ export default function HomeScreen() {
       offset + PAGE_SIZE
     );
   }
+
+  async function goToManualPage() {
+    const page = Number(pageInput);
+
+    const totalPages = Math.ceil(
+      totalPokemon / PAGE_SIZE
+    );
+
+    if (
+      !Number.isInteger(page) ||
+      page < 1 ||
+      page > totalPages
+    ) {
+      setPageInput(
+        (Math.floor(offset / PAGE_SIZE) + 1).toString()
+      );
+
+      setError(
+        `La página debe estar entre 1 y ${totalPages}.`
+      );
+
+      return;
+    }
+
+    const newOffset =
+      (page - 1) * PAGE_SIZE;
+
+    if (newOffset === offset) {
+      return;
+    }
+
+    try {
+      setChangingPage(true);
+      setError(null);
+
+      await loadPokemon(newOffset);
+    } finally {
+      setChangingPage(false);
+    }
+  }
+
+  const currentPage =
+    Math.floor(offset / PAGE_SIZE) + 1;
+
+  const totalPages =
+    totalPokemon === 0
+      ? 1
+      : Math.ceil(
+          totalPokemon / PAGE_SIZE
+        );
 
   const currentStart =
     totalPokemon === 0
@@ -400,23 +459,70 @@ export default function HomeScreen() {
                 styles.pageIndicatorLabel
               }
             >
-              PAGINA
+              PÁGINA
             </Text>
 
             <View
               style={
-                styles.pageNumberBox
+                styles.pageNumberRow
               }
             >
+              <TextInput
+                value={pageInput}
+                onChangeText={(value) => {
+                  const numericValue =
+                    value.replace(
+                      /[^0-9]/g,
+                      ""
+                    );
+
+                  setPageInput(
+                    numericValue
+                  );
+                }}
+                style={styles.pageInput}
+                keyboardType="number-pad"
+                selectTextOnFocus
+                maxLength={2}
+                editable={!changingPage}
+                onSubmitEditing={
+                  goToManualPage
+                }
+              />
+
               <Text
-                style={styles.pageText}
+                style={
+                  styles.pageTotal
+                }
               >
-                {Math.floor(
-                  offset /
-                    PAGE_SIZE
-                ) + 1}
+                /{totalPages}
               </Text>
             </View>
+
+            <Pressable
+              style={({ pressed }) => [
+                styles.goPageButton,
+                changingPage &&
+                  styles.disabledButton,
+                pressed &&
+                  !changingPage &&
+                  styles.pagePressed,
+              ]}
+              onPress={
+                goToManualPage
+              }
+              disabled={changingPage}
+            >
+              <Text
+                style={
+                  styles.goPageText
+                }
+              >
+                {changingPage
+                  ? "..."
+                  : "IR"}
+              </Text>
+            </Pressable>
           </View>
 
           <Pressable
@@ -813,6 +919,7 @@ const styles = StyleSheet.create({
   pageIndicator: {
     alignItems: "center",
     justifyContent: "center",
+    minWidth: 62,
   },
 
   pageIndicatorLabel: {
@@ -823,20 +930,49 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
 
-  pageNumberBox: {
-    minWidth: 32,
-    height: 28,
-    backgroundColor: COLORS.white,
-    borderWidth: 3,
-    borderColor: COLORS.black,
+  pageNumberRow: {
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
 
-  pageText: {
+  pageInput: {
+    width: 38,
+    height: 30,
+    backgroundColor: COLORS.white,
+    borderWidth: 3,
+    borderColor: COLORS.black,
     color: COLORS.red,
     fontFamily: FONTS.pixel,
     fontSize: 10,
+    fontWeight: "bold",
+    textAlign: "center",
+    padding: 0,
+  },
+
+  pageTotal: {
+    color: COLORS.gray,
+    fontFamily: FONTS.pixel,
+    fontSize: 7,
+    fontWeight: "bold",
+    marginLeft: 4,
+  },
+
+  goPageButton: {
+    marginTop: 5,
+    minWidth: 38,
+    height: 24,
+    backgroundColor: COLORS.red,
+    borderWidth: 2,
+    borderColor: COLORS.redDark,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  goPageText: {
+    color: COLORS.white,
+    fontFamily: FONTS.pixel,
+    fontSize: 7,
     fontWeight: "bold",
   },
 
