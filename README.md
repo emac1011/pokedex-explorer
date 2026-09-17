@@ -1,56 +1,55 @@
-# Welcome to your Expo app 👋
+# Pokédex Explorer
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicación móvil desarrollada con React Native y Expo que permite explorar información de Pokémon utilizando la PokéAPI. La aplicación también permite guardar Pokémon como favoritos mediante almacenamiento persistente local.
 
-## Get started
+## Descripción
 
-1. Install dependencies
+Pokédex Explorer es un proyecto desarrollado para el curso **Programación para Dispositivos Móviles (TPA-4001)**.
 
-   ```bash
-   npm install
-   ```
+La aplicación consume información en tiempo real desde una API REST pública y permite al usuario:
 
-2. Start the app
+- Explorar la Pokédex Nacional.
+- Navegar entre páginas de Pokémon.
+- Ir directamente a una página específica.
+- Buscar Pokémon por nombre o número.
+- Consultar información detallada de cada Pokémon.
+- Guardar Pokémon como favoritos.
+- Consultar los favoritos guardados.
+- Eliminar Pokémon de favoritos.
+- Mantener los favoritos almacenados aunque la aplicación se cierre.
 
-   ```bash
-   npx expo start
-   ```
+## Tecnologías utilizadas
 
-In the output, you'll find options to open the app in a
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- Context API
+- AsyncStorage
+- PokéAPI
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## API utilizada
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+La aplicación utiliza **PokéAPI**, una API REST pública que proporciona información sobre Pokémon.
 
-## Get a fresh project
+La aplicación realiza peticiones HTTP para obtener:
 
-When you're ready, run:
+- Lista de Pokémon.
+- Información individual de cada Pokémon.
+- Tipos.
+- Estadísticas.
+- Habilidades.
+- Sprites e imágenes oficiales.
 
-```bash
-npm run reset-project
-```
+API:
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+https://pokeapi.co/
 
-### Other setup steps
+## Persistencia local
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+La aplicación utiliza **AsyncStorage** para almacenar los Pokémon marcados como favoritos en el dispositivo.
 
-## Learn more
+La gestión de los datos locales se encuentra separada de las vistas:
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```text
+src/services/favoritesStorage.ts
