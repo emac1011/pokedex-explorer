@@ -2,6 +2,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
     ActivityIndicator,
+    Pressable,
     ScrollView,
     StyleSheet,
     Text,
@@ -10,6 +11,7 @@ import {
 
 import { getPokemonById } from "../../api/pokemonApi";
 import { PokemonCard } from "../../components/pokemon/PokemonCard";
+import { useFavorites } from "../../context/FavoritesContext";
 import { PokemonDetail } from "../../types/pokemon";
 
 export default function PokemonDetailScreen() {
@@ -18,6 +20,13 @@ export default function PokemonDetailScreen() {
   const [pokemon, setPokemon] = useState<PokemonDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
+
+  const {
+    addFavorite,
+    removeFavorite,
+    isFavorite,
+  } = useFavorites();
 
   useEffect(() => {
     loadPokemon();
@@ -50,6 +59,33 @@ export default function PokemonDetailScreen() {
     }
   }
 
+  async function toggleFavorite() {
+    if (!pokemon) {
+      return;
+    }
+
+    try {
+      setFavoriteLoading(true);
+
+      if (isFavorite(pokemon.id)) {
+        await removeFavorite(pokemon.id);
+      } else {
+        await addFavorite(pokemon);
+      }
+    } catch (error) {
+      console.error(
+        "Error al actualizar favorito:",
+        error
+      );
+
+      setError(
+        "No se pudo actualizar el favorito."
+      );
+    } finally {
+      setFavoriteLoading(false);
+    }
+  }
+
   if (loading) {
     return (
       <View style={styles.center}>
@@ -76,9 +112,29 @@ export default function PokemonDetailScreen() {
     );
   }
 
+  const favorite = isFavorite(pokemon.id);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <PokemonCard pokemon={pokemon} />
+
+      <Pressable
+        style={[
+          styles.favoriteButton,
+          favorite && styles.removeFavoriteButton,
+          favoriteLoading && styles.disabledButton,
+        ]}
+        onPress={toggleFavorite}
+        disabled={favoriteLoading}
+      >
+        <Text style={styles.favoriteButtonText}>
+          {favoriteLoading
+            ? "Actualizando..."
+            : favorite
+              ? "💔 Quitar de favoritos"
+              : "❤️ Agregar a favoritos"}
+        </Text>
+      </Pressable>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
@@ -162,6 +218,24 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 16,
     textAlign: "center",
+  },
+  favoriteButton: {
+    marginTop: 20,
+    height: 50,
+    borderWidth: 1,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  removeFavoriteButton: {
+    opacity: 0.75,
+  },
+  disabledButton: {
+    opacity: 0.4,
+  },
+  favoriteButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
   },
   section: {
     marginTop: 20,

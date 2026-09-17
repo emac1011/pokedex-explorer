@@ -110,9 +110,10 @@ export default function HomeScreen() {
     loadPokemon(offset + PAGE_SIZE);
   }
 
-  const currentStart = totalPokemon === 0
-    ? 0
-    : offset + 1;
+  const currentStart =
+    totalPokemon === 0
+      ? 0
+      : offset + 1;
 
   const currentEnd = Math.min(
     offset + PAGE_SIZE,
@@ -140,6 +141,15 @@ export default function HomeScreen() {
       <Text style={styles.subtitle}>
         Explora los Pokémon de la Pokédex Nacional
       </Text>
+
+      <Pressable
+        style={styles.favoritesButton}
+        onPress={() => router.push("/favorites")}
+      >
+        <Text style={styles.favoritesButtonText}>
+          ❤️ Ver favoritos
+        </Text>
+      </Pressable>
 
       <View style={styles.searchContainer}>
         <TextInput
@@ -256,6 +266,18 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     marginBottom: 20,
+  },
+  favoritesButton: {
+    height: 46,
+    borderWidth: 1,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 15,
+  },
+  favoritesButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
   },
   searchContainer: {
     marginBottom: 20,

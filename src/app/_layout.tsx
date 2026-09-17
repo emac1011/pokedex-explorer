@@ -19,6 +19,13 @@ export default function RootLayout() {
             title: "Pokémon",
           }}
         />
+
+        <Stack.Screen
+          name="favorites"
+          options={{
+            title: "Favoritos",
+          }}
+        />
       </Stack>
     </FavoritesProvider>
   );
