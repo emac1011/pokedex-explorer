@@ -138,7 +138,7 @@ export default function HomeScreen() {
       </Text>
 
       <Text style={styles.subtitle}>
-        Explora los Pokémon disponibles
+        Explora los Pokémon de la Pokédex Nacional
       </Text>
 
       <View style={styles.searchContainer}>
