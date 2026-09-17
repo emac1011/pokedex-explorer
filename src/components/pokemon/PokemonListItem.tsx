@@ -1,26 +1,40 @@
-import { StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Pressable, StyleSheet, Text } from "react-native";
 
 import { PokemonListItem as PokemonListItemType } from "../../types/pokemon";
 
 interface PokemonListItemProps {
   pokemon: PokemonListItemType;
-  index: number;
 }
 
 export function PokemonListItem({
   pokemon,
-  index,
 }: PokemonListItemProps) {
+  function openPokemon() {
+    const pokemonId = Number(
+      pokemon.url.split("/").filter(Boolean).pop()
+    );
+
+    router.push(`/pokemon/${pokemonId}`);
+  }
+
+  const pokemonId = Number(
+    pokemon.url.split("/").filter(Boolean).pop()
+  );
+
   return (
-    <View style={styles.container}>
+    <Pressable
+      style={styles.container}
+      onPress={openPokemon}
+    >
       <Text style={styles.number}>
-        #{String(index + 1).padStart(3, "0")}
+        #{String(pokemonId).padStart(3, "0")}
       </Text>
 
       <Text style={styles.name}>
         {pokemon.name}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 
