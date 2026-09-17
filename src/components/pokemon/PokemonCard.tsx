@@ -1,85 +1,260 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import {
+    Image,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
+
+import { COLORS, FONTS } from "../../constants/colors";
 import { PokemonDetail } from "../../types/pokemon";
 
 interface PokemonCardProps {
   pokemon: PokemonDetail;
 }
 
-export function PokemonCard({ pokemon }: PokemonCardProps) {
+export function PokemonCard({
+  pokemon,
+}: PokemonCardProps) {
   const image =
-    pokemon.sprites.other?.["official-artwork"]?.front_default ??
+    pokemon.sprites.other?.[
+      "official-artwork"
+    ]?.front_default ??
     pokemon.sprites.front_default;
-
-  const types = pokemon.types
-    .map((item) => item.type.name)
-    .join(" / ");
 
   return (
     <View style={styles.card}>
-      <View style={styles.info}>
+      <View style={styles.topRow}>
         <Text style={styles.number}>
-          #{String(pokemon.id).padStart(3, "0")}
+          #
+          {String(pokemon.id).padStart(
+            3,
+            "0"
+          )}
         </Text>
 
-        <Text style={styles.name}>
-          {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
-        </Text>
-
-        <Text style={styles.types}>{types}</Text>
+        <View style={styles.pixels}>
+          <View style={styles.pixel} />
+          <View style={styles.pixel} />
+          <View style={styles.pixel} />
+        </View>
       </View>
 
-      {image && (
-        <Image
-          source={{ uri: image }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      )}
+      <View style={styles.line} />
+
+      <View style={styles.main}>
+        <View style={styles.info}>
+          <Text style={styles.name}>
+            {pokemon.name.toUpperCase()}
+          </Text>
+
+          <View style={styles.typeContainer}>
+            {pokemon.types.map(
+              (item) => (
+                <View
+                  key={item.slot}
+                  style={styles.typeBox}
+                >
+                  <Text
+                    style={styles.typeText}
+                  >
+                    {item.type.name.toUpperCase()}
+                  </Text>
+                </View>
+              )
+            )}
+          </View>
+        </View>
+
+        {image && (
+          <View style={styles.imageBox}>
+            <Image
+              source={{ uri: image }}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          </View>
+        )}
+      </View>
+
+      <View style={styles.bottomRow}>
+        <Text style={styles.dexLabel}>
+          NATIONAL DEX
+        </Text>
+
+        <Text style={styles.idLabel}>
+          #{String(pokemon.id).padStart(
+            3,
+            "0"
+          )}
+        </Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 150,
-    marginBottom: 16,
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: "#ffffff",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    elevation: 3,
-    shadowColor: "#000000",
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
+    minHeight: 245,
+
+    backgroundColor: COLORS.white,
+
+    borderWidth: 3,
+    borderColor: COLORS.black,
+
+    padding: 14,
+
+    marginBottom: 14,
+
+    shadowColor: COLORS.black,
+    shadowOpacity: 1,
+    shadowRadius: 0,
     shadowOffset: {
-      width: 0,
-      height: 3,
+      width: 5,
+      height: 5,
     },
+
+    elevation: 5,
   },
+
+  topRow: {
+    flexDirection: "row",
+
+    alignItems: "center",
+
+    justifyContent: "space-between",
+  },
+
+  number: {
+    color: COLORS.red,
+
+    fontFamily: FONTS.pixel,
+
+    fontSize: 11,
+
+    fontWeight: "bold",
+  },
+
+  pixels: {
+    flexDirection: "row",
+
+    gap: 4,
+  },
+
+  pixel: {
+    width: 7,
+    height: 7,
+
+    backgroundColor: COLORS.red,
+  },
+
+  line: {
+    height: 3,
+
+    backgroundColor: COLORS.black,
+
+    marginTop: 9,
+  },
+
+  main: {
+    minHeight: 150,
+
+    flexDirection: "row",
+
+    alignItems: "center",
+
+    justifyContent: "space-between",
+  },
+
   info: {
     flex: 1,
+
+    paddingRight: 8,
   },
-  number: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#777777",
-  },
+
   name: {
-    marginTop: 4,
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#222222",
-  },
-  types: {
-    marginTop: 8,
+    color: COLORS.black,
+
+    fontFamily: FONTS.pixel,
+
     fontSize: 15,
-    color: "#555555",
-    textTransform: "capitalize",
+
+    fontWeight: "bold",
   },
+
+  typeContainer: {
+    marginTop: 13,
+
+    flexDirection: "row",
+
+    flexWrap: "wrap",
+
+    gap: 6,
+  },
+
+  typeBox: {
+    backgroundColor: COLORS.blueLight,
+
+    borderWidth: 2,
+    borderColor: "#91CFE3",
+
+    paddingHorizontal: 7,
+    paddingVertical: 6,
+  },
+
+  typeText: {
+    color: COLORS.blueDark,
+
+    fontFamily: FONTS.pixel,
+
+    fontSize: 5,
+
+    fontWeight: "bold",
+  },
+
+  imageBox: {
+    width: 145,
+    height: 145,
+
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   image: {
-    width: 120,
-    height: 120,
+    width: 140,
+    height: 140,
+  },
+
+  bottomRow: {
+    flexDirection: "row",
+
+    alignItems: "center",
+
+    justifyContent: "space-between",
+
+    borderTopWidth: 2,
+
+    borderTopColor: "#E2EEF2",
+
+    paddingTop: 10,
+  },
+
+  dexLabel: {
+    color: COLORS.gray,
+
+    fontFamily: FONTS.pixel,
+
+    fontSize: 6,
+
+    fontWeight: "bold",
+  },
+
+  idLabel: {
+    color: COLORS.red,
+
+    fontFamily: FONTS.pixel,
+
+    fontSize: 7,
+
+    fontWeight: "bold",
   },
 });
